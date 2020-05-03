@@ -84,25 +84,18 @@ app.get('/bookmark', (req, res)=>{
     Bookmarks
     .getBookmarksByTitle(title)
     .then(bookmarkWithTitle=>{
+        if(bookmarkWithTitle.length ===0){
+            res.statusMessage=`The title ${title} wasn't found in the bookmarks app database`;
+            return res.status(404).end();
+        }
         return res.status(200).json(bookmarkWithTitle);
     })
     .catch(err=>{
         res.statusMessage="Something went wrong with the databse";
         return res.status(500).end();
     })
-    /*Enviar error cuando no existe
-    let result = Bookmarks.find({title: title})
-        console.log(title);
-        if (title == title){
-            return true;
-        }
     
-    if(!result){
-        res.statusMessage=`The book with title =${title} was not found in the list`;
-        return res.status(404).end();
-    }
-    */
-    
+
     
 });
 
@@ -179,7 +172,13 @@ app.delete('/bookmark/:id',(req,res)=>{
     }*/
     Bookmarks
     .deleteBookmark(id)
+    
     .then(deletedBookmark=>{
+        console.log(deletedBookmark.count);
+        if (deletedBookmark.count=== 0){
+            return res.status(404).end(); 
+            res.statusMessage=`The id ${id} wasnt found in bookmarks app database`;
+        }
         return res.status(200).json(deletedBookmark);
     })
     .catch(err=>{
